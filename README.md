@@ -1,3 +1,3 @@
 # FileSharingPlatform
 
-Bu proje, .NET Core Web API [Angular CLI] (https://github.com/angular/angular-cli) 11.2.9 sürümü ile oluşturulmuştur.
+Bu proje, ASP.NET Core Web API ve Angular 11.2.9 sürümü ile oluşturulmuştur.

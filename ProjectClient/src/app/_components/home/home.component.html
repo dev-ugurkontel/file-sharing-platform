@@ -1,0 +1,239 @@
+<div class="container-fluid p-0">
+
+    <div class="row mt-3">
+
+        <div class="col-6 d-flex justify-content-start">
+            <h3>Project Client</h3>
+        </div>
+
+        <div class="col-6 d-flex justify-content-end">
+            <button type="submit" class="btn btn-dark" style="cursor: pointer;" (click)="logout()">Logout</button>
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div class="row card m-3 pt-4 p-3">
+
+        <div class="col-12 p-0">
+
+            <div class="row">
+
+                <div class="col-8">
+                    <input class="form-control" type="file" (change)="selectFiles($event)" />
+                </div>
+                
+                <div class="col-4">
+                    <button
+                        class="btn btn-success btn-block"
+                        [disabled]="!selectedFiles"
+                        (click)="uploadFiles()"
+                    >
+                    Upload
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    
+                    <div class="row">
+                        <div class="col-12 p-0">
+                            <label for="inputFileName" class="text-muted form-label ml-2">Required <span class="text-danger">*</span></label>
+                            <input [(ngModel)]="fileName" id="inputFileName" class="form-control" type="text" placeholder="File name">
+                        </div>
+                    </div>                    
+
+                    <div class="row mt-3 p-0" style="max-height:100px">
+                        <div class="col-xs-12 col-sm-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
+                            <div class="form-check">
+                                <input class="form-check-input" name="sharedState"[(ngModel)]="sharedState" type="radio" [value]="true" [checked]="sharedState" (change)="toggleRadioAll($event)">
+                                <label class="form-check-label" for="isPublic">
+                                  Public
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" name="sharedState" [(ngModel)]="sharedState" type="radio" [value]="false" [checked]="!sharedState" (change)="toggleRadioAll($event)">
+                                <label class="form-check-label" for="isPrivate">
+                                  Private
+                                </label>
+                              </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-sm-6 col-md-6 col-lg-8 col-xl-9 col-xxl-10 p-0">
+                            <div class="form-group p-0" style="position:relative!important;top:-240px" *ngIf="sharedState">
+                        
+                                <form [formGroup]="usersForm">
+                                    <div class="form-group">
+                                
+                                        <ng-select [multiple]="true" [items]="users" formControlName="selectedUsersIds" placeholder="Select users who can view files"
+                                            bindLabel="userName" bindValue="id">
+                                
+                                            <ng-template ng-header-tmp let-items="items">
+                                                <input type="checkbox" [checked]="this.usersForm.get('selectedUsersIds').value.length === users.length " (change)="toggleCheckAll($event)"/> {{ this.usersForm.get('selectedUsersIds').value.length === users.length ? 'Deselect' : 'Select'}} All
+                                            </ng-template>
+                                
+                                            <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+        
+                                                <div class="ng-value" *ngFor="let item of items | slice:0:2">
+                                                    <span class="ng-value-label">{{item.userName}}</span>
+                                                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                                                </div>
+        
+                                                <div class="ng-value" *ngIf="items.length > 2">
+                                                    <span class="ng-value-label">{{items.length - 2}} user more...</span>
+                                                </div>
+        
+                                            </ng-template>
+                                        
+                                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item.userName}}
+                                            </ng-template>
+                                        
+                                            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                                <input id="item-{{index}}" type="checkbox" [checked]="item$.selected" /> {{item.userName}}
+                                            </ng-template>
+                                
+                                        </ng-select>
+                                    </div>
+                                </form>        
+        
+                            </div> 
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                    <label for="inputFileName" class="text-muted form-label ml-2">Optional</label>
+                    <textarea [(ngModel)]="description" id="inputDescription" class="form-control" type="text" placeholder="File description" style="min-height: 100px;"></textarea>
+                </div>
+
+            </div>
+            
+        </div>
+            
+        <div class="col-12" [hidden]="!selectedFiles">
+
+            <div class="card mt-3">
+
+                <div class="card-header">Uploaded file</div>
+                
+                <div class="card-body pb-1">
+
+                    <div *ngFor="let progressInfo of progressInfos" class="mb-2">
+
+                        <span class="badge badge-primary text-white mb-3">{{ progressInfo.fileName }}</span>
+
+                        <div class="progress">
+                            <div
+                                class="progress-bar progress-bar-info progress-bar-striped"
+                                role="progressbar"
+                                attr.aria-valuenow="{{ progressInfo.value }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                [ngStyle]="{ width: progressInfo.value + '%' }"
+                            >
+                            {{ progressInfo.value }}%
+                            </div>
+                        </div>
+                    </div>
+                        
+                    <div *ngIf="message.length" class="my-3 mb-0" role="alert">
+                        <ul class="list-group" *ngFor="let msg of message; let i = index">
+                            <li class="list-group-item list-group-item-success">{{ msg }}</li>
+                        </ul>
+                    </div>
+
+                </div>
+                    
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div class="row">
+
+        <div class="col-xs-12 col-sm-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-2 mb-3" *ngFor="let get of gets">
+           
+            <div class="card" style="min-height:180px;">
+
+                <div class="card-header pt-2 pr-2 pb-0 pl-1">
+                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                            <div *ngIf="get.file.shareState; else private">
+                                <h6 class="text-success">Public</h6>
+                            </div>            
+                            <ng-template #private>
+                                <h6 class="text-danger">Private</h6>
+                            </ng-template>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+                            <div *ngIf="get.isOwner && userId == get.userId">
+                                <h6 class="text-success text-right">Owner</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>            
+
+                <div class="card-body p-0">
+
+                    <div class="row p-0">
+                        <div class="col-12 p-0 pt-2 m-0 text-center">
+
+                            <video *ngIf="checkMime(get.file.fileMime) == 1" height="160" width="100%" controls>
+                                <source src="https://localhost:5001/{{get.file.filePath}}" type="{{get.file.fileMime}}">
+                                Your browser does not support the video tag.
+                            </video>
+
+                            <img *ngIf="checkMime(get.file.fileMime) == 2" src="https://localhost:5001/{{get.file.filePath}}" alt="{{get.file.fileName}}" height="160" width="100%" />
+                            
+                            <h4 *ngIf="checkMime(get.file.fileMime) == 0">{{get.file.fileName}}{{get.file.fileExt}}</h4>                            
+                            
+                        </div>
+                        <div class="col-12 mt-3 pb-3" style="font-size:13px">
+                            <div *ngIf="get.isOwner && userId == get.userId; else publicDesc">
+                                <textarea #inputDescriptionEdit{{get.fileId}} id="inputDescriptionEdit{{get.fileId}}" class="form-control" type="text" placeholder="New file description" style="min-height: 50px;">{{get.file.description}}</textarea>
+                            </div>
+                            <ng-template #publicDesc>
+                                {{get.file.description}}
+                            </ng-template>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer pr-0 pl-0">  
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" (click)="onDown(get.file.filePath, get.file.fileName)" class="btn btn-warning btn-sm btn-block text-white">Download File</button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="get.isOwner && userId == get.userId" class="row mt-3">
+
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary btn-sm btn-block" (click)="editDescription(get.fileId, 'inputDescriptionEdit' + get.fileId)">Edit</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-danger btn-sm btn-block" (click)="deleteFile(get.file.id)">Delete</button>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

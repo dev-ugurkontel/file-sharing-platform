@@ -1,0 +1,37 @@
+1 2 3 4 5 6
+
+1 2 3 4 5 6
+3 4 5 6 1 2
+5 6 1 2 3 4
+2 3 4 5 6 1
+4 5 6 1 2 3
+6 1 2 3 4 5
+
+
+
+var nJ = 1;
+
+for (var i = 1; i <= 6; i++) { 
+
+    var carpan = 4;
+
+    var j = (i + 2 * carpan);
+    
+
+    if (j % 2 == 1) {
+        if (j > 7)
+            nJ++;
+        if (carpan == 4 && j > 6)
+            nJ = 1;
+        console.log(i, (j > 6 ? nJ : j));
+    }
+
+    if (j % 2 == 0) {
+        if (j > 7)
+            nJ++;
+        if (carpan == 4 && j > 6)
+            nJ = 1;
+        console.log(i, (j > 6 ? nJ : j));
+    }
+
+}

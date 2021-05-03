@@ -1,3 +1,3 @@
 # FileSharingPlatform
 
-Bu proje, ASP.NET Core Web API ve Angular 11.2.9 sürümü ile oluşturulmuştur.
+Bu proje, ASP.NET Core Web API ve Angular 11.2.8 sürümü ile oluşturulmuştur.
